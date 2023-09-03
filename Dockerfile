@@ -1,4 +1,4 @@
-FROM node:14
+FROM node:16
 
 WORKDIR /app
 COPY package.json yarn.lock ./
@@ -16,7 +16,4 @@ RUN if [ "$NODE_ENV" = "development" ]; then \
 EXPOSE 3000
 
 # Start the app
-RUN if [ "$NODE_ENV" = "development" ]; then \
-    CMD ["yarn", "start:dev"]\
-    else
-fi
+CMD ["yarn", "start"]

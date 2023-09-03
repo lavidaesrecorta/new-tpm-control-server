@@ -95,7 +95,7 @@ export class SyncService {
             SyncService.activeSessions.push(newSession);
 
             //emit something to esp32 so it knows its registered
-            // this.sendInitialConfig(SyncService.connectedTpms.length - 1)
+            this.sendInitialConfig(SyncService.connectedTpms.length - 1, deviceId)
             // return true;
             console.log(`Creating new TPM with ${k}, ${n}, ${l}`)
             return {deviceToken: newToken, settings: { 'k': k, 'n': n, 'l': l } }
@@ -179,9 +179,11 @@ export class SyncService {
 
         this.client.emit(`${SyncService.connectedTpms[tpmIndex].deviceToken}/stimulate`, { 'stimulus': newRandomStimulus, 'output': localOutput })
     }
-    sendInitialConfig(tpmIndex: number) {
+    sendInitialConfig(tpmIndex: number,deviceId: string) {
+        console.log(deviceId);
+        
         const [k, n, l] = [SyncService.connectedTpms[tpmIndex].k, SyncService.connectedTpms[tpmIndex].n, SyncService.connectedTpms[tpmIndex].l]
-        this.client.emit(`${SyncService.connectedTpms[tpmIndex].deviceToken}/init`, { settings: { 'k': k, 'n': n, 'l': l } })
+        this.client.emit(`${deviceId}/init`, { deviceToken: SyncService.connectedTpms[tpmIndex].deviceToken, settings: { 'k': k, 'n': n, 'l': l } })
     }
 
     sendSaveInstruction(tpmIndex: number){

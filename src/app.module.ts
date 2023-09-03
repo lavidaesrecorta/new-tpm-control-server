@@ -11,18 +11,21 @@ import { DatabaseController } from './database/database.controller';
 import { DatabaseModule } from './database/database.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-@Module({
-  imports: [ClientsModule.register([
+@Module({ 
+  imports: [
+    ClientsModule.register([
     {
       name: 'TPM_SERVICE',
       transport: Transport.MQTT,
       options: {
-        host: "localhost",
-        port: 1883,
+        host: process.env.MQTT_HOST,
+        hostname: process.env.MQTT_HOST,
+        port: process.env.MQTT_PORT,
         protocol: 'mqtt',
       }
     },
-  ]), DatabaseModule,
+  ]),
+    DatabaseModule,
     TypeOrmModule.forRoot({
     type: 'sqlite',
     database: 'db',
