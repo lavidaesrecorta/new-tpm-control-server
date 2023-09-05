@@ -20,8 +20,8 @@ interface ActiveSession {
     deviceToken: string;
     status: string;
     learnIterations: number;
-    startTime: number;
-    endTime?: number;
+    startTime: string;
+    endTime?: string;
 }
 
 const knl_tuples = [
@@ -88,7 +88,7 @@ export class SyncService {
             const newSession: ActiveSession = {
                 deviceToken: newToken,
                 status: "INITIALIZED",
-                startTime: Date.now(),
+                startTime: new Date().toISOString(),
                 learnIterations: 0
             }
 
@@ -205,7 +205,7 @@ export class SyncService {
         const newSavedSession : SyncSession = new SyncSession();
         newSavedSession.token_uid = SyncService.activeSessions[tpmIndex].deviceToken
         newSavedSession.start_time = SyncService.activeSessions[tpmIndex].startTime 
-        newSavedSession.end_time = Date.now()
+        newSavedSession.end_time = new Date().toISOString()
         newSavedSession.status = SyncService.activeSessions[tpmIndex].status
         newSavedSession.TPM_K=SyncService.connectedTpms[tpmIndex].k
         newSavedSession.TPM_N=SyncService.connectedTpms[tpmIndex].n

@@ -11,9 +11,9 @@ export class SyncSession {
     status: string
 
     @Column()
-    start_time: number
+    start_time: string
     @Column()
-    end_time: number
+    end_time: string
 
     @Column()
     TPM_K: number
