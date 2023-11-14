@@ -16,6 +16,10 @@ export class SyncSession {
     end_time: string
 
     @Column()
+    step_count: number
+
+
+    @Column()
     TPM_K: number
     @Column()
     TPM_N: number

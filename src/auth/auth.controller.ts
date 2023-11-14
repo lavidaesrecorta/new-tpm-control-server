@@ -3,6 +3,8 @@ import { AuthService } from './auth.service';
 import { TpmDatabaseService } from 'src/database/tpmDatabase.service';
 import { ChallengeDatabaseService } from 'src/database/challengeDatabase.service';
 import { PendingChallenge } from 'src/database/challenge.entity';
+import { SensorDatabaseService } from 'src/database/sensorDatabase.service';
+import { SensorData } from 'src/database/sensor_data.entity';
 
 export class RequestChallengeDto {
     token_uid: string;
@@ -11,6 +13,7 @@ export class RequestChallengeDto {
 export class AwnserChallengeDto {
     token_uid: string;
     awnser: string;
+    measuresList: string[];
 }
 
 @Controller('auth')
@@ -18,6 +21,7 @@ export class AuthController {
     constructor(private readonly authService: AuthService,
         private readonly tpmDatabaseService: TpmDatabaseService,
         private readonly challengeDatabaseService: ChallengeDatabaseService,
+        private readonly sensorDatabaseService: SensorDatabaseService,
         ) { }
 
     @Post('request-challenge')
@@ -52,8 +56,21 @@ export class AuthController {
         if (!!pendingChallenge) {
             const checkResponse = this.authService.checkPendingChallenge(data.awnser,pendingChallenge,savedTpm);
             this.challengeDatabaseService.delete(pendingChallenge.id)
-            if(! checkResponse) console.log("Device unauthorized.");
-            else console.log("Device authorized");
+            if(! checkResponse) {
+                console.log("Device unauthorized.");
+            }
+            else {
+                for (let index = 0; index < data.measuresList.length; index++) {
+                    const element = data.measuresList[index];
+                    const measures = JSON.parse(element);
+                    const newSensorData: SensorData = new SensorData();
+                    newSensorData.token_uid = data.token_uid;
+                    newSensorData.temperature = measures.temperature;
+                    newSensorData.hall_sensor= measures.hall_sensor;
+                    this.sensorDatabaseService.create(newSensorData);
+                    console.log("Device authorized");
+                }
+            }
             return { authorization: checkResponse }
         }
     }

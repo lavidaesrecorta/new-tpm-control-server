@@ -16,6 +16,12 @@ export enum TPM_STATES {
     ON_SYNC = 4,
 }
 
+enum TPM_RULES {
+    HEBBIAN = 0,
+    ANTI_HEBBIAN = 1,
+    RANDOM_WALK = 2,
+}
+
 interface ActiveSession {
     deviceToken: string;
     status: string;
@@ -26,20 +32,23 @@ interface ActiveSession {
 
 const knl_tuples = [
     [3,3,3],
-    [4,3,3],
-    [5,3,3],
-    [6,3,3],
-    [7,3,3],
-    [7,4,3],
-    [7,5,3],
-    [7,6,3],
-    [7,7,3],
-    [7,7,4],
-    [7,7,5],
-    [7,7,6],
-    [7,7,7],
+    [3,5,3],
+    [3,7,3],
+    [3,9,3],
+    [3,11,3],
+    [3,13,3],
+    [3,15,3],
+    [3,17,3],
+    [3,19,3],
+    [3,21,3],
 ]
 
+const training_rules = [
+    TPM_RULES.HEBBIAN,
+    TPM_RULES.RANDOM_WALK,
+]
+
+const MAX_ITERATIONS_PER_SETTING = 5
 
 @Injectable()
 export class SyncService {
@@ -51,15 +60,21 @@ export class SyncService {
 
     static connectedTpms: ConnectedTpm[];
     static activeSessions: ActiveSession[] = [];
-
+    
+    static currentLearnIndex = 0;
     static currentSettingsIndex = 0;
     static currentSettingsIterations = 0;
 
     newTpm(deviceId: string) {
 
-        if(SyncService.currentSettingsIterations > 5){
+        if(SyncService.currentSettingsIterations == MAX_ITERATIONS_PER_SETTING){
             SyncService.currentSettingsIndex += 1;
-            SyncService.currentSettingsIterations = 0;
+            SyncService.currentSettingsIterations = 1;
+            if(SyncService.currentSettingsIndex == knl_tuples.length) {
+                SyncService.currentSettingsIndex = 0;
+                SyncService.currentLearnIndex += 1;
+                if(SyncService.currentLearnIndex == training_rules.length) return false;
+            }
             if(SyncService.currentSettingsIndex == knl_tuples.length) return
         } else {
             SyncService.currentSettingsIterations += 1;
@@ -97,8 +112,8 @@ export class SyncService {
             //emit something to esp32 so it knows its registered
             this.sendInitialConfig(SyncService.connectedTpms.length - 1, deviceId)
             // return true;
-            console.log(`Creating new TPM with ${k}, ${n}, ${l}`)
-            return {deviceToken: newToken, settings: { 'k': k, 'n': n, 'l': l } }
+            console.log(`Creating new TPM with ${k}, ${n}, ${l} and using ${TPM_RULES[training_rules[SyncService.currentLearnIndex]]} learn rule`)
+            return {deviceToken: newToken, settings: { 'k': k, 'n': n, 'l': l }, learnRule: training_rules[SyncService.currentLearnIndex]}
         }
 
         return false;
@@ -210,6 +225,7 @@ export class SyncService {
         newSavedSession.TPM_K=SyncService.connectedTpms[tpmIndex].k
         newSavedSession.TPM_N=SyncService.connectedTpms[tpmIndex].n
         newSavedSession.TPM_L=SyncService.connectedTpms[tpmIndex].l
+        newSavedSession.step_count=SyncService.connectedTpms[tpmIndex].iterCount
         this.sessionDatabaseService.create(newSavedSession)
     }
 

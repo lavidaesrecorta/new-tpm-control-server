@@ -82,7 +82,26 @@ export const hebbianRule = (output: number, neuronStimulus: number[], neuronWeig
     const localSigma = outputSigma(localField(n, neuronWeights, neuronStimulus));
     const newWeights = [...neuronWeights]
     for (let index = 0; index < neuronWeights.length; index++) {
-        newWeights[index] = gFunction(neuronWeights[index] + neuronStimulus[index] * output * heavisideStep(localSigma * output) * heavisideStep(output * output), l);
+        newWeights[index] = gFunction(neuronWeights[index] + neuronStimulus[index] * output * heavisideStep(localSigma * output) * heavisideStep(output), l);
+    }
+    return newWeights
+}
+
+
+export const antiHebbianRule = (output: number, neuronStimulus: number[], neuronWeights: number[], n: number, l: number) => {
+    const localSigma = outputSigma(localField(n, neuronWeights, neuronStimulus));
+    const newWeights = [...neuronWeights]
+    for (let index = 0; index < neuronWeights.length; index++) {
+        newWeights[index] = gFunction(neuronWeights[index] - neuronStimulus[index] * output * heavisideStep(localSigma * output) * heavisideStep(output), l);
+    }
+    return newWeights
+}
+
+export const randomWalkRule = (output: number, neuronStimulus: number[], neuronWeights: number[], n: number, l: number) => {
+    const localSigma = outputSigma(localField(n, neuronWeights, neuronStimulus));
+    const newWeights = [...neuronWeights]
+    for (let index = 0; index < neuronWeights.length; index++) {
+        newWeights[index] = gFunction(neuronWeights[index] + neuronStimulus[index] * heavisideStep(localSigma * output) * heavisideStep(output), l);
     }
     return newWeights
 }
