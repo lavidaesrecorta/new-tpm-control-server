@@ -75,7 +75,6 @@ export class SyncService {
                 SyncService.currentLearnIndex += 1;
                 if(SyncService.currentLearnIndex == training_rules.length) return false;
             }
-            if(SyncService.currentSettingsIndex == knl_tuples.length) return
         } else {
             SyncService.currentSettingsIterations += 1;
         }
