@@ -8,10 +8,11 @@ import { PendingChallenge } from './challenge.entity';
 import { SessionDatabaseService } from './syncSessionDatabase.service';
 import { SyncSession } from './syncSession.entity';
 import { SensorDatabaseService } from './sensorDatabase.service';
+import { SensorData } from './sensor_data.entity';
 
 @Module({
     imports: [
-      TypeOrmModule.forFeature([SavedTpm,PendingChallenge, SyncSession]),
+      TypeOrmModule.forFeature([SavedTpm,PendingChallenge, SyncSession, SensorData]),
     ],
     providers: [TpmDatabaseService,ChallengeDatabaseService, SessionDatabaseService, SensorDatabaseService],
     controllers: [DatabaseController],
