@@ -7,13 +7,14 @@ import { ChallengeDatabaseService } from './challengeDatabase.service';
 import { PendingChallenge } from './challenge.entity';
 import { SessionDatabaseService } from './syncSessionDatabase.service';
 import { SyncSession } from './syncSession.entity';
+import { SensorDatabaseService } from './sensorDatabase.service';
 
 @Module({
     imports: [
       TypeOrmModule.forFeature([SavedTpm,PendingChallenge, SyncSession]),
     ],
-    providers: [TpmDatabaseService,ChallengeDatabaseService, SessionDatabaseService],
+    providers: [TpmDatabaseService,ChallengeDatabaseService, SessionDatabaseService, SensorDatabaseService],
     controllers: [DatabaseController],
-    exports: [TpmDatabaseService, ChallengeDatabaseService, SessionDatabaseService],
+    exports: [TpmDatabaseService, ChallengeDatabaseService, SessionDatabaseService, SensorDatabaseService],
   })
 export class DatabaseModule {}
