@@ -16,7 +16,7 @@ export enum TPM_STATES {
     ON_SYNC = 4,
 }
 
-enum TPM_RULES {
+export enum TPM_RULES {
     HEBBIAN = 0,
     ANTI_HEBBIAN = 1,
     RANDOM_WALK = 2,
